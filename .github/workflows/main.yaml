@@ -24,7 +24,8 @@ jobs:
             imagemagick   \
             libgeos++-dev \
             libproj-dev   \
-            poppler-utils
+            poppler-utils \
+            texlive-extra-utils
       - uses: actions/cache@v2
         with:
           path: ~/.cache/pip/
@@ -35,18 +36,16 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements/requirements.txt
-      - name: Install Tex Live
+      - name: Install fonts
         run: |
-          sudo apt update
           sudo apt install \
-            texlive-base              \
-            texlive-extra-utils       \
-            texlive-fonts-extra       \
-            texlive-fonts-recommended \
-            texlive-latex-base        \
-            texlive-latex-extra       \
-            texlive-latex-recommended \
-            texlive-xetex
+            fonts-crosextra-carlito
+          make -C fonts/
+          cp -r fonts/ /usr/share/fonts/
+          fc-cache
+      - name: Install Tectonic
+        run: |
+          conda install -c conda-forge tectonic
       - name: Build artifacts
         run: |
           # adjust the ImageMagick policies to convert PDF to PNG
@@ -55,10 +54,7 @@ jobs:
           # https://stackoverflow.com/a/59193253
           sudo sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
           #
-          make -C fonts/
-          cp -r fonts/ /usr/share/fonts/
-          fc-cache
-          make all
+          LATEX_COMPILER=tectonic make all
       - name: Check layouts
         run: |
           set -x

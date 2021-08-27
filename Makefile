@@ -1,4 +1,6 @@
 SRC := $(wildcard *.tex)
+LATEX_COMPILER ?= xelatex
+
 
 .PHONY: default
 default: all
@@ -24,14 +26,14 @@ figures:
 
 .PHONY: cheatsheets
 cheatsheets:
-	xelatex cheatsheets.tex
+	$(LATEX_COMPILER) cheatsheets.tex
 	convert -density 150 cheatsheets.pdf -scene 1 cheatsheets.png
 
 .PHONY: handouts
 handouts:
-	xelatex handout-beginner.tex
-	xelatex handout-intermediate.tex
-	xelatex handout-tips.tex
+	$(LATEX_COMPILER) handout-beginner.tex
+	$(LATEX_COMPILER) handout-intermediate.tex
+	$(LATEX_COMPILER) handout-tips.tex
 	convert -density 150 handout-tips.pdf handout-tips.png
 	convert -density 150 handout-beginner.pdf handout-beginner.png
 	convert -density 150 handout-intermediate.pdf handout-intermediate.png
