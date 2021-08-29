@@ -27,30 +27,20 @@ jobs:
             poppler-utils
           python -m pip install --upgrade pip
           pip install -r requirements/requirements.txt
-      - name: Install Tex Live
-        run: |
-          sudo apt update
-          sudo apt install \
-            texlive-base              \
-            texlive-extra-utils       \
-            texlive-fonts-extra       \
-            texlive-fonts-recommended \
-            texlive-latex-base        \
-            texlive-latex-extra       \
-            texlive-latex-recommended \
-            texlive-xetex
       - name: Build artifacts
-        run: |
-          # adjust the ImageMagick policies to convert PDF to PNG
-          # remove all policies restricting Ghostscript ability to process files
-          # https://stackoverflow.com/q/52998331
-          # https://stackoverflow.com/a/59193253
-          sudo sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
-          #
-          make -C fonts/
-          cp -r fonts/ /usr/share/fonts/
-          fc-cache
-          make all
+        uses: xu-cheng/texlive-action/full@v1
+        with:
+          run: |
+            # adjust the ImageMagick policies to convert PDF to PNG
+            # remove all policies restricting Ghostscript ability to process files
+            # https://stackoverflow.com/q/52998331
+            # https://stackoverflow.com/a/59193253
+            sudo sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
+            #
+            make -C fonts/
+            cp -r fonts/ /usr/share/fonts/
+            fc-cache
+            make all
       - name: Check layouts
         run: |
           set -x
